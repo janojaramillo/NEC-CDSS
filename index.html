@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NEC-CDSS v3.0 Pluralista</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0c1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEC-CDSS">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="description" content="CDSS Anti-Hivemind para Enterocolitis Necrotizante — CSS Panamá">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060a11;
+  --bg-card: #0c1220;
+  --bg-card2: #0f1628;
+  --bg-input: #0d1424;
+  --border: #1a2540;
+  --border-hi: #243356;
+  --text: #e8edf5;
+  --text2: #8b9cc0;
+  --text3: #5a6d94;
+  --blue: #4d8cf7;
+  --cyan: #22d3ee;
+  --green: #34d399;
+  --yellow: #fbbf24;
+  --orange: #fb923c;
+  --red: #f87171;
+  --red-deep: #dc2626;
+  --purple: #a78bfa;
+  --pink: #f472b6;
+  --n0: #475569; --n1: #d97706; --n2: #ea580c; --n23: #be123c; --n3: #dc2626;
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --serif: 'DM Serif Display', serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 10px;
+  --rs: 6px;
+  --t: all .22s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* === HEADER === */
+.hdr{background:linear-gradient(135deg,#0c1220,#0a1430);border-bottom:1px solid var(--border);padding:12px 16px;position:sticky;top:0;z-index:200;backdrop-filter:blur(16px)}
+.hdr-in{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hdr h1{font-family:var(--serif);font-size:1.2rem;background:linear-gradient(135deg,var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-r{display:flex;gap:8px;align-items:center}
+.badge{font-family:var(--mono);font-size:.6rem;padding:3px 8px;border-radius:20px;border:1px solid var(--border);color:var(--text3);letter-spacing:.06em;white-space:nowrap}
+.badge-anti{border-color:var(--purple);color:var(--purple);background:rgba(167,139,250,.06)}
+
+/* === CONTAINER === */
+.ct{max-width:920px;margin:0 auto;padding:16px 14px 130px}
+
+/* === TABS === */
+.tabs{display:flex;gap:3px;background:var(--bg-card);border-radius:var(--r);padding:3px;margin-bottom:16px;border:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;padding:9px 6px;border:none;background:0;color:var(--text3);font-family:var(--sans);font-size:.72rem;font-weight:500;border-radius:7px;cursor:pointer;transition:var(--t);white-space:nowrap;text-align:center}
+.tab:hover{color:var(--text2);background:var(--bg-card2)}
+.tab.on{background:var(--blue);color:#fff;font-weight:600}
+
+/* === SECTIONS === */
+.sec{display:none;animation:fi .3s ease}.sec.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sec-t{font-family:var(--serif);font-size:1.05rem;margin-bottom:3px}
+.sec-s{font-size:.78rem;color:var(--text3);margin-bottom:14px;line-height:1.45}
+
+/* === CARDS === */
+.cd{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;transition:var(--t)}
+.cd-h{display:flex;align-items:center;gap:7px;margin-bottom:10px}
+.cd-i{width:28px;height:28px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.cd-t{font-weight:600;font-size:.82rem}
+
+/* === FORM === */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fg3{grid-template-columns:1fr 1fr 1fr}.fg1{grid-template-columns:1fr}
+.fd{display:flex;flex-direction:column;gap:3px}
+.fd label{font-size:.68rem;font-weight:500;color:var(--text2);letter-spacing:.02em}
+.fd input,.fd select{background:var(--bg-input);border:1px solid var(--border);border-radius:var(--rs);padding:9px 10px;color:var(--text);font-family:var(--mono);font-size:.82rem;transition:var(--t);width:100%}
+.fd input:focus,.fd select:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 2px rgba(77,140,247,.12)}
+.fd input::placeholder{color:var(--text3);font-family:var(--sans);font-size:.74rem}
+.fd select{cursor:pointer}.fd select option{background:var(--bg-card)}
+
+/* Toggle */
+.tr{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(26,37,64,.5)}
+.tr:last-child{border-bottom:0}
+.tl{font-size:.78rem;color:var(--text2);flex:1}
+.tg{position:relative;width:40px;height:22px;flex-shrink:0}
+.tg input{opacity:0;width:0;height:0;position:absolute}
+.ts{position:absolute;inset:0;background:var(--border);border-radius:11px;cursor:pointer;transition:var(--t)}
+.ts::before{content:'';position:absolute;width:16px;height:16px;left:3px;bottom:3px;background:var(--text3);border-radius:50%;transition:var(--t)}
+.tg input:checked+.ts{background:var(--blue)}
+.tg input:checked+.ts::before{transform:translateX(18px);background:#fff}
+
+/* === INFO BOX === */
+.ibox{margin-top:10px;padding:9px 11px;border-radius:var(--rs);font-size:.72rem;line-height:1.5}
+.ibox-cyan{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.12);color:var(--cyan)}
+.ibox-purple{background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.12);color:var(--purple)}
+.ibox-yellow{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.12);color:var(--yellow)}
+.ibox-red{background:rgba(248,113,113,.05);border:1px solid rgba(248,113,113,.12);color:var(--red)}
+
+/* === RESULTS === */
+.res{display:none;animation:fi .4s ease}.res.vis{display:block}
+.divider{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:20px 0}
+
+/* Risk Banner */
+.rb{border-radius:var(--r);padding:18px;margin-bottom:14px;text-align:center;position:relative;overflow:hidden}
+.rb::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(255,255,255,.05),transparent)}
+.rb .rl{font-family:var(--mono);font-size:.65rem;text-transform:uppercase;letter-spacing:.12em;opacity:.75;margin-bottom:4px}
+.rb .rv{font-family:var(--serif);font-size:1.2rem;position:relative}
+.rb .rf{font-family:var(--mono);font-size:.65rem;margin-top:6px;opacity:.65}
+.rb .rs2{font-family:var(--mono);font-size:.7rem;margin-top:3px;opacity:.75}
+.rn0{background:linear-gradient(135deg,#1e293b,#334155);border:1px solid #475569}
+.rn1{background:linear-gradient(135deg,#78350f,#92400e);border:1px solid var(--n1)}
+.rn2{background:linear-gradient(135deg,#7c2d12,#9a3412);border:1px solid var(--n2)}
+.rn23{background:linear-gradient(135deg,#881337,#9f1239);border:1px solid var(--n23)}
+.rn3{background:linear-gradient(135deg,#7f1d1d,#991b1b);border:1px solid var(--n3)}
+.rn3d{background:linear-gradient(135deg,#7f1d1d,#991b1b);border:2px solid var(--red-deep);box-shadow:0 0 30px rgba(220,38,38,.25)}
+
+/* Query Classification Badge */
+.qclass{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-family:var(--mono);font-size:.68rem;font-weight:600;margin-bottom:14px}
+.qclass-a{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.25);color:var(--green)}
+.qclass-b{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);color:var(--purple)}
+
+/* Spectrum cards */
+.spec{background:var(--bg-card);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.spec-h{padding:12px 14px;display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:600;border-bottom:1px solid var(--border)}
+.spec-b{padding:12px 14px}
+.spec-tag{font-family:var(--mono);font-size:.6rem;padding:2px 8px;border-radius:4px;font-weight:600;letter-spacing:.04em}
+.spec-primary .spec-h{border-left:3px solid var(--blue)}
+.spec-alt .spec-h{border-left:3px solid var(--yellow)}
+.spec-asym .spec-h{border-left:3px solid var(--red);background:rgba(248,113,113,.04)}
+.spec-contra .spec-h{border-left:3px solid var(--purple);background:rgba(167,139,250,.04)}
+.spec-uncert .spec-h{border-left:3px solid var(--orange);background:rgba(251,146,60,.04)}
+.spec-hive .spec-h{border-left:3px solid var(--pink);background:rgba(244,114,182,.04)}
+.spec-ctx .spec-h{border-left:3px solid var(--cyan);background:rgba(34,211,238,.04)}
+.spec-body{font-size:.8rem;line-height:1.6;color:var(--text2)}
+.spec-body strong{color:var(--text);font-weight:600}
+
+/* Alerts */
+.al{background:var(--bg-card);border-left:3px solid var(--yellow);border-radius:0 var(--rs) var(--rs) 0;padding:10px 12px;margin-bottom:6px;font-size:.78rem;line-height:1.5;color:var(--text2)}
+.al.alta{border-left-color:var(--red)}.al.media{border-left-color:var(--yellow)}.al.info{border-left-color:var(--blue)}
+.al-tag{display:inline-block;font-family:var(--mono);font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:3px;margin-bottom:3px;letter-spacing:.04em}
+.al-tag.alta{background:rgba(248,113,113,.12);color:var(--red)}
+.al-tag.media{background:rgba(251,191,36,.12);color:var(--yellow)}
+.al-tag.info{background:rgba(77,140,247,.12);color:var(--blue)}
+
+/* Recs */
+.rc{display:flex;gap:8px;padding:9px 12px;background:var(--bg-card);border-radius:var(--rs);margin-bottom:5px;font-size:.78rem;line-height:1.45;color:var(--text2);border:1px solid var(--border)}
+.rn{font-family:var(--mono);font-size:.65rem;color:var(--cyan);font-weight:600;flex-shrink:0;margin-top:1px}
+
+/* Evidence source tag */
+.ev{display:inline-block;font-family:var(--mono);font-size:.58rem;padding:1px 6px;border-radius:3px;background:rgba(77,140,247,.08);color:var(--blue);margin:1px 2px;border:1px solid rgba(77,140,247,.15)}
+.ev-warn{background:rgba(251,191,36,.08);color:var(--yellow);border-color:rgba(251,191,36,.15)}
+
+/* Discriminator */
+.disc{display:flex;align-items:flex-start;gap:6px;padding:6px 10px;background:rgba(34,211,153,.04);border:1px solid rgba(34,211,153,.1);border-radius:var(--rs);margin-top:6px;font-size:.72rem;color:var(--green);line-height:1.4}
+
+/* Bottom bar */
+.bb{position:fixed;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(to top,var(--bg) 60%,transparent);z-index:200}
+.bb-in{max-width:920px;margin:0 auto;display:flex;gap:8px}
+.btn{flex:1;padding:13px;border:none;border-radius:var(--r);font-family:var(--sans);font-size:.85rem;font-weight:600;cursor:pointer;transition:var(--t);letter-spacing:.01em}
+.btn-p{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;box-shadow:0 4px 16px rgba(77,140,247,.25)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(77,140,247,.35)}
+.btn-s{background:var(--bg-card);color:var(--text2);border:1px solid var(--border)}
+.btn-s:hover{background:var(--bg-card2);color:var(--text)}
+
+/* Responsive */
+@media(max-width:600px){.fg{grid-template-columns:1fr 1fr}.fg3{grid-template-columns:1fr 1fr}.hdr h1{font-size:1.05rem}}
+@media(max-width:380px){.fg{grid-template-columns:1fr}.tab{font-size:.66rem;padding:7px 3px}}
+
+/* MGIS Score Buttons */
+.mgis-row{margin-bottom:8px}
+.mgis-label{font-size:.75rem;color:var(--text2);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.mgis-label .mgis-val{font-family:var(--mono);font-size:.7rem;color:var(--yellow);min-width:18px;text-align:right}
+.mgis-btns{display:flex;gap:3px}
+.mgis-btn{flex:1;padding:8px 4px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg-input);color:var(--text3);font-family:var(--mono);font-size:.68rem;text-align:center;cursor:pointer;transition:var(--t);line-height:1.2}
+.mgis-btn:hover{border-color:var(--border-hi);color:var(--text2)}
+.mgis-btn.sel{background:rgba(77,140,247,.15);border-color:var(--blue);color:var(--blue);font-weight:600}
+.mgis-btn .mgis-sc{display:block;font-size:.58rem;opacity:.65;margin-top:1px}
+.mgis-ring{width:72px;height:72px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 8px;transition:var(--t)}
+.mgis-ring-val{font-family:var(--mono);font-size:1.4rem;font-weight:700;line-height:1}
+.mgis-ring-max{font-family:var(--mono);font-size:.6rem;opacity:.5}
+.mgis-sev{text-align:center;font-family:var(--serif);font-size:.95rem;margin-bottom:4px}
+.mgis-dec{text-align:center;font-family:var(--mono);font-size:.68rem;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.mgis-summary{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.pulse{animation:pulse 2s ease-in-out infinite}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:0}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="hdr"><div class="hdr-in">
+  <h1>NEC-CDSS</h1>
+  <div class="hdr-r">
+    <span class="badge badge-anti">Anti-Hivemind</span>
+    <span class="badge">v3.0 · 6 Módulos</span>
+  </div>
+</div></div>
+
+<div class="ct">
+<!-- TABS -->
+<div class="tabs" id="mainTabs">
+  <button class="tab on" data-t="clinica" onclick="stab('clinica')">Clínica</button>
+  <button class="tab" data-t="labs" onclick="stab('labs')">Labs</button>
+  <button class="tab" data-t="imagen" onclick="stab('imagen')">Imagen</button>
+  <button class="tab" data-t="nirs" onclick="stab('nirs')">NIRS</button>
+  <button class="tab" data-t="otros" onclick="stab('otros')">Otros</button>
+  <button class="tab" data-t="mgis" onclick="stab('mgis')">MGIS</button>
+</div>
+
+<!-- ══════ TAB: CLÍNICA ══════ -->
+<div class="sec on" id="sec-clinica">
+  <h2 class="sec-t">Datos Clínicos</h2>
+  <p class="sec-s">Demografía, signos clínicos y temporalidad</p>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(77,140,247,.1);color:var(--blue)">👶</div><span class="cd-t">Demografía</span></div>
+    <div class="fg fg3">
+      <div class="fd"><label>EG (semanas)</label><input type="number" id="eg" placeholder="28" min="22" max="42"></div>
+      <div class="fd"><label>Peso (g)</label><input type="number" id="peso" placeholder="1200" step="10" min="300"></div>
+      <div class="fd"><label>Días de vida</label><input type="number" id="dv" placeholder="2" min="0"></div>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(251,191,36,.1);color:var(--yellow)">⚠️</div><span class="cd-t">Signos Clínicos (Gatillo T0)</span></div>
+    <div class="fg fg1"><div class="fd"><label>Residuos gástricos (%)</label><input type="number" id="rg" placeholder="0" min="0" max="100"></div></div>
+    <div style="margin-top:10px">
+      <div class="tr"><span class="tl">Distensión abdominal</span><label class="tg"><input type="checkbox" id="dist"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Sangre en heces (macroscópica)</span><label class="tg"><input type="checkbox" id="sheces"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Sangre oculta en heces</span><label class="tg"><input type="checkbox" id="soc"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Deterioro clínico con inotrópicos</span><label class="tg"><input type="checkbox" id="det"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Eritema / induración pared abdominal</span><label class="tg"><input type="checkbox" id="erit"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Segundo vasopresor requerido</span><label class="tg"><input type="checkbox" id="vaso2"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Apneas de novo</span><label class="tg"><input type="checkbox" id="apneas"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">Letargia / irritabilidad</span><label class="tg"><input type="checkbox" id="letargia"><span class="ts"></span></label></div>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(52,211,153,.1);color:var(--green)">⏱</div><span class="cd-t">Temporalidad</span></div>
+    <div class="fg">
+      <div class="fd"><label>Horas desde síntomas</label><input type="number" id="hsint" placeholder="0" min="0"></div>
+      <div class="fd"><label>Alimentación</label><select id="alim"><option value="">Seleccionar...</option><option value="lm">Leche materna</option><option value="formula">Fórmula prematuros</option><option value="mixta">Mixta</option><option value="npo">NPO</option></select></div>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(167,139,250,.1);color:var(--purple)">🔀</div><span class="cd-t">Tipo de Consulta (Módulo 1)</span></div>
+    <div class="fg fg1">
+      <div class="fd"><label>Clasificación</label>
+        <select id="qtype">
+          <option value="A">Tipo A — Análisis e Interpretación (datos concretos)</option>
+          <option value="B">Tipo B — Escenario Hipotético / Exploratorio</option>
+        </select>
+      </div>
+    </div>
+    <div class="ibox ibox-purple" style="margin-top:8px">
+      <strong>Tipo A:</strong> Prioriza precisión, parsimonia, evidencia alta.<br>
+      <strong>Tipo B:</strong> Prioriza amplitud del diferencial, trayectorias alternativas.
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: LABS ══════ -->
+<div class="sec" id="sec-labs">
+  <h2 class="sec-t">Laboratorios</h2>
+  <p class="sec-s">Gasometría, hemograma e índices inflamatorios</p>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(248,113,113,.1);color:var(--red)">🩸</div><span class="cd-t">Gasometría y Perfusión</span></div>
+    <div class="fg">
+      <div class="fd"><label>pH</label><input type="number" id="ph" placeholder="7.35" step="0.01" min="6.8" max="7.8"></div>
+      <div class="fd"><label>Exceso de Base</label><input type="number" id="eb" placeholder="0" step="0.1"></div>
+      <div class="fd"><label>HCO₃ (mEq/L)</label><input type="number" id="hco3" placeholder="22" step="0.1"></div>
+      <div class="fd"><label>Lactato (mmol/L)</label><input type="number" id="lact" placeholder="1.0" step="0.1" min="0"></div>
+    </div>
+    <div class="ibox ibox-yellow" style="margin-top:8px">
+      <strong>Dim 4 — Disenso:</strong> Lactato &gt;3.0 vs &gt;5.5 mmol/L como gatillo. <span class="ev ev-warn">Valpacos 2017</span>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(167,139,250,.1);color:var(--purple)">🔬</div><span class="cd-t">Hemograma</span></div>
+    <div class="fg">
+      <div class="fd"><label>Plaquetas (/µL)</label><input type="number" id="plaq" placeholder="250000" step="1000" min="0"></div>
+      <div class="fd"><label>Hb (g/dL)</label><input type="number" id="hb" placeholder="15" step="0.1" min="0"></div>
+      <div class="fd"><label>Relación I:T</label><input type="number" id="it" placeholder="0.10" step="0.01" min="0" max="1"></div>
+      <div class="fd"><label>Linfocitos abs. (/µL)</label><input type="number" id="linf" placeholder="3000" step="100" min="0"></div>
+    </div>
+    <div style="margin-top:10px">
+      <div class="tr"><span class="tl">MPV aumentado</span><label class="tg"><input type="checkbox" id="mpv"><span class="ts"></span></label></div>
+      <div class="tr"><span class="tl">PDW aumentado</span><label class="tg"><input type="checkbox" id="pdw"><span class="ts"></span></label></div>
+    </div>
+    <div class="ibox ibox-yellow" style="margin-top:8px">
+      <strong>Dim 4 — Disenso I:T:</strong> &gt;0.5 vs &gt;0.2 según fuente. Fluctuaciones por EG. <span class="ev ev-warn">Sokou 2025</span>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(244,114,182,.1);color:var(--pink)">📊</div><span class="cd-t">Índices de Gravedad</span></div>
+    <div class="fg fg3">
+      <div class="fd"><label>NLR (Neutr/Linf)</label><input type="number" id="nlr" placeholder="2.0" step="0.1" min="0"></div>
+      <div class="fd"><label>PLR (Plaq/Linf)</label><input type="number" id="plr" placeholder="80" step="1" min="0"></div>
+      <div class="fd"><label>Caída plaq. (%/72h)</label><input type="number" id="plaq_caida" placeholder="0" step="1" min="0" max="100"></div>
+    </div>
+    <div class="ibox ibox-purple" style="margin-top:8px">
+      <strong>Dim 4:</strong> PLR &gt;100 — Disenso Alto, requiere validación multicéntrica. Caída &gt;30% en 72h predice gangrena. <span class="ev ev-warn">Sokou 2025</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: IMAGEN ══════ -->
+<div class="sec" id="sec-imagen">
+  <h2 class="sec-t">Imagen</h2>
+  <p class="sec-s">Rx y US abdominal — Dimensiones 1, 3 y 5 integradas</p>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(34,211,238,.1);color:var(--cyan)">📷</div><span class="cd-t">Radiografía</span></div>
+    <div class="tr"><span class="tl">Aire libre (neumoperitoneo)</span><label class="tg"><input type="checkbox" id="rx_al"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Neumatosis intestinal</span><label class="tg"><input type="checkbox" id="rx_neum"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Gas venoso portal (PVG)</span><label class="tg"><input type="checkbox" id="rx_pvg"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Asa fija</span><label class="tg"><input type="checkbox" id="rx_fija"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Rx concluyente</span><label class="tg"><input type="checkbox" id="rx_concl" checked><span class="ts"></span></label></div>
+    <div class="ibox ibox-red" style="margin-top:8px">
+      <strong>Dim 5 — Escenario de Falla 1:</strong> Rx tiene sensibilidad ~40% para necrosis. No descartar NEC por Rx normal ante deterioro clínico. <span class="ev">Kim 2023</span> <span class="ev">Ahle 2017</span>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(167,139,250,.1);color:var(--purple)">🔊</div><span class="cd-t">Ultrasonido Abdominal</span></div>
+    <div class="tr"><span class="tl" style="font-weight:600;color:var(--cyan)">US disponible</span><label class="tg"><input type="checkbox" id="us_disp" checked onchange="togUS()"><span class="ts"></span></label></div>
+    <div id="usf">
+      <div class="fg fg1" style="margin-top:10px"><div class="fd"><label>Espesor pared intestinal (mm)</label><input type="number" id="us_pared" placeholder="2.0" step="0.1" min="0"></div></div>
+      <div style="margin-top:8px">
+        <div class="tr"><span class="tl">Neumatosis intestinal (US)</span><label class="tg"><input type="checkbox" id="us_neum"><span class="ts"></span></label></div>
+        <div class="tr"><span class="tl">Gas en vena porta (US)</span><label class="tg"><input type="checkbox" id="us_pvg"><span class="ts"></span></label></div>
+        <div class="tr"><span class="tl">Aire libre (US)</span><label class="tg"><input type="checkbox" id="us_al"><span class="ts"></span></label></div>
+        <div class="tr"><span class="tl">Ascitis compleja (ecos/septos)</span><label class="tg"><input type="checkbox" id="us_asc"><span class="ts"></span></label></div>
+        <div class="tr"><span class="tl">Motilidad ausente — TOTAL (4 cuadrantes)</span><label class="tg"><input type="checkbox" id="us_mot_t"><span class="ts"></span></label></div>
+        <div class="tr"><span class="tl">Motilidad ausente — SEGMENTARIA</span><label class="tg"><input type="checkbox" id="us_mot_s"><span class="ts"></span></label></div>
+        <div class="tr"><span class="tl">Perfusión Doppler ausente</span><label class="tg"><input type="checkbox" id="us_perf"><span class="ts"></span></label></div>
+      </div>
+      <div class="ibox ibox-yellow" style="margin-top:8px">
+        <strong>Dim 4 — Disenso pared:</strong> Engrosamiento &gt;2.5mm <span class="ev">Chen 2019</span> vs 2.0-2.7mm <span class="ev">Alexander 2019</span>. Adelgazamiento &lt;1.0mm <span class="ev">Chen 2019</span> vs &lt;1.5mm <span class="ev">Jia 2024</span>.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: NIRS ══════ -->
+<div class="sec" id="sec-nirs">
+  <h2 class="sec-t">NIRS</h2>
+  <p class="sec-s">Oximetría tisular — Dim 4: Disenso Alto, fuente única</p>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(52,211,153,.1);color:var(--green)">📡</div><span class="cd-t">Valores NIRS</span></div>
+    <div class="fg">
+      <div class="fd"><label>rcSO₂ renal (%)</label><input type="number" id="rcso2" placeholder="—" min="0" max="100"></div>
+      <div class="fd"><label>rLivSO₂ esplácnico (%)</label><input type="number" id="rlivso2" placeholder="—" min="0" max="100"></div>
+    </div>
+    <div class="ibox ibox-red" style="margin-top:8px">
+      <strong>⚠ Dim 4+6:</strong> rcSO₂ ≤71% / rLivSO₂ ≤59% — <span class="ev ev-warn">Schat 2016 — FUENTE ÚNICA</span>. Umbrales operador-dependientes; validación limitada a VLBW. No extrapolable a término.
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: OTROS ══════ -->
+<div class="sec" id="sec-otros">
+  <h2 class="sec-t">Otros Factores</h2>
+  <p class="sec-s">Peritransfusional (R5) e información contextual CSS Panamá</p>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(248,113,113,.1);color:var(--red)">💉</div><span class="cd-t">Protocolo Peritransfusional (R5)</span></div>
+    <div class="tr"><span class="tl">Transfusión GR planeada</span><label class="tg"><input type="checkbox" id="tx_plan"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Transfusión GR en curso</span><label class="tg"><input type="checkbox" id="tx_curso"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Alimentación enteral activa</span><label class="tg"><input type="checkbox" id="alim_act"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Paciente en NPO</span><label class="tg"><input type="checkbox" id="npo"><span class="ts"></span></label></div>
+    <div class="ibox ibox-yellow" style="margin-top:8px">
+      <strong>Dim 2 — TANEC:</strong> Debate no resuelto: ¿la transfusión causa NEC o la anemia previa? Faltan RCTs. <span class="ev ev-warn">Zhang 2025</span> <span class="ev ev-warn">Sokou 2025</span>
+    </div>
+  </div>
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(34,211,238,.1);color:var(--cyan)">🏥</div><span class="cd-t">Contexto CSS Panamá (Módulo 6)</span></div>
+    <div class="tr"><span class="tl">UCIN Nivel III</span><label class="tg"><input type="checkbox" id="ucin3" checked><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Cirugía neonatal disponible</span><label class="tg"><input type="checkbox" id="cx_disp" checked><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">ECMO disponible</span><label class="tg"><input type="checkbox" id="ecmo"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">US 24/7 disponible</span><label class="tg"><input type="checkbox" id="us247"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">CEUS disponible</span><label class="tg"><input type="checkbox" id="ceus"><span class="ts"></span></label></div>
+    <div class="ibox ibox-cyan" style="margin-top:8px">
+      <strong>Dim 6:</strong> El CDSS ajusta recomendaciones según recursos. Sin ECMO, sin CEUS, cirugía limitada → rutas alternativas.
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB: MGIS ══════ -->
+<div class="sec" id="sec-mgis">
+  <h2 class="sec-t">Manitoba Gut Injury Score</h2>
+  <p class="sec-s">Score integrado: Clínica + Labs + Rx + POCUS. Fenotipo FPIE vs NEC. <span class="ev">CNPOCUS / Manitoba IUS</span></p>
+
+  <!-- MGIS Live Score Display -->
+  <div class="mgis-summary" id="mgisLive">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div>
+        <div class="mgis-ring" id="mgisRing" style="border:3px solid var(--green)">
+          <span class="mgis-ring-val" id="mgisTotal">0</span>
+          <span class="mgis-ring-max">/32</span>
+        </div>
+      </div>
+      <div style="flex:1">
+        <div class="mgis-sev" id="mgisSev" style="text-align:left">Low / Non-specific</div>
+        <div id="mgisDec" class="mgis-dec" style="background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2)">Estable · Indeterminado</div>
+        <div style="font-size:.7rem;color:var(--text3);margin-top:4px" id="mgisBreak">Clínica: 0/9 · Rx: 0/3 · US: 0/20</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Clinical Assessment -->
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(251,191,36,.1);color:var(--yellow)">1</div><span class="cd-t">Clinical Assessment <span style="font-family:var(--mono);font-size:.7rem;color:var(--text3);margin-left:6px">0/9</span></span></div>
+    <div class="mgis-row"><div class="mgis-label"><span>1. Clinical Instability</span><span class="mgis-val" id="mg1v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg1',0,this)">None<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg1',1,this)">Mild<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg1',2,this)">Moderate<span class="mgis-sc">2</span></button><button class="mgis-btn" onclick="mgSet('mg1',3,this)">Severe<span class="mgis-sc">3</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>2. Abdominal Signs</span><span class="mgis-val" id="mg2v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg2',0,this)">None<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg2',1,this)">Mild<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg2',2,this)">Moderate<span class="mgis-sc">2</span></button><button class="mgis-btn" onclick="mgSet('mg2',3,this)">Severe<span class="mgis-sc">3</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>3. Laboratory Abnormalities</span><span class="mgis-val" id="mg3v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg3',0,this)">None<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg3',1,this)">Mild<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg3',2,this)">Moderate<span class="mgis-sc">2</span></button><button class="mgis-btn" onclick="mgSet('mg3',3,this)">Severe<span class="mgis-sc">3</span></button></div></div>
+  </div>
+
+  <!-- 2. Abdominal X-Ray -->
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(34,211,238,.1);color:var(--cyan)">2</div><span class="cd-t">Abdominal X-Ray <span style="font-family:var(--mono);font-size:.7rem;color:var(--text3);margin-left:6px">0/3</span></span></div>
+    <div class="mgis-row"><div class="mgis-label"><span>4. AXR Findings</span><span class="mgis-val" id="mg4v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg4',0,this)">Normal<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg4',1,this)">Ileus<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg4',2,this)">Pneumatosis<span class="mgis-sc">2</span></button><button class="mgis-btn" onclick="mgSet('mg4',3,this)">Pneumo<span class="mgis-sc">3</span></button></div></div>
+  </div>
+
+  <!-- 3. Ultrasound Findings -->
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(167,139,250,.1);color:var(--purple)">3</div><span class="cd-t">Ultrasound Findings <span style="font-family:var(--mono);font-size:.7rem;color:var(--text3);margin-left:6px">0/20</span></span></div>
+    <div class="mgis-row"><div class="mgis-label"><span>5. Portal Venous Gas</span><span class="mgis-val" id="mg5v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg5',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg5',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg5',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>6. Pneumatosis</span><span class="mgis-val" id="mg6v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg6',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg6',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg6',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>7. Peristalsis</span><span class="mgis-val" id="mg7v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg7',0,this)">Normal<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg7',1,this)">Reduced<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg7',2,this)">Absent<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>8. Peritoneal Fluid</span><span class="mgis-val" id="mg8v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg8',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg8',1,this)">Mild<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg8',2,this)">Mod+<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>9. Wall Thickening</span><span class="mgis-val" id="mg9v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg9',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg9',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg9',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>10. Wall Thinning</span><span class="mgis-val" id="mg10v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg10',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg10',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg10',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>11. Loss of Wall Layers</span><span class="mgis-val" id="mg11v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg11',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg11',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg11',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>12. Hyperemia</span><span class="mgis-val" id="mg12v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg12',0,this)">Normal<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg12',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg12',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>13. Ischemia (No Flow)</span><span class="mgis-val" id="mg13v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg13',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg13',1,this)">Focal<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg13',2,this)">Diffuse<span class="mgis-sc">2</span></button></div></div>
+    <div class="mgis-row"><div class="mgis-label"><span>14. Free/Dilated Loops</span><span class="mgis-val" id="mg14v">0</span></div>
+      <div class="mgis-btns"><button class="mgis-btn sel" onclick="mgSet('mg14',0,this)">Absent<span class="mgis-sc">0</span></button><button class="mgis-btn" onclick="mgSet('mg14',1,this)">Present<span class="mgis-sc">1</span></button><button class="mgis-btn" onclick="mgSet('mg14',2,this)">Multiple<span class="mgis-sc">2</span></button></div></div>
+    <div style="margin-top:6px">
+      <div class="tr"><span class="tl" style="font-weight:600">15. Pneumoperitoneum (US)</span><label class="tg"><input type="checkbox" id="mg_pneumo" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    </div>
+  </div>
+
+  <!-- P. Phenotype -->
+  <div class="cd">
+    <div class="cd-h"><div class="cd-i" style="background:rgba(244,114,182,.1);color:var(--pink)">P</div><span class="cd-t">Phenotype (Optional)</span></div>
+    <div class="tr"><span class="tl">Suspected FPIE</span><label class="tg"><input type="checkbox" id="mg_fpie" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Eosinophilia</span><label class="tg"><input type="checkbox" id="mg_eosino" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Thrombocytosis</span><label class="tg"><input type="checkbox" id="mg_trombocitosis" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Anemia</span><label class="tg"><input type="checkbox" id="mg_anemia" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Metabolic Acidosis</span><label class="tg"><input type="checkbox" id="mg_acidosis" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">Hyponatremia</span><label class="tg"><input type="checkbox" id="mg_hipoNa" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="tr"><span class="tl">CRP Rising</span><label class="tg"><input type="checkbox" id="mg_crp" onchange="mgUpdate()"><span class="ts"></span></label></div>
+    <div class="fg fg1" style="margin-top:8px"><div class="fd"><label>Days to improvement (formula trial)</label><input type="number" id="mg_dias" placeholder="—" min="0" step="1"></div></div>
+    <div class="ibox ibox-purple" style="margin-top:8px">
+      <strong>Fenotipo FPIE:</strong> Suspected FPIE + Eosinophilia + Thrombocytosis → sugiere FPIE.<br>
+      <strong>Fenotipo NEC:</strong> Anemia + Acidosis + CRP Rising → sugiere NEC.
+    </div>
+  </div>
+</div>
+
+<!-- ══════ RESULTADOS ══════ -->
+<div class="res" id="resC">
+  <div class="divider"></div>
+  <div id="qClassBadge"></div>
+  <div id="riskBanner"></div>
+  <div id="mgisOut"></div>
+  <div id="spectrumOut"></div>
+  <div id="alertsOut"></div>
+  <div id="recsOut"></div>
+</div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bb"><div class="bb-in">
+  <button class="btn btn-s" onclick="resetAll()">Limpiar</button>
+  <button class="btn btn-p" onclick="runCDSS()">▶ Ejecutar CDSS Pluralista</button>
+</div></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// NEC-CDSS v3.0 PLURALISTA ENGINE
+// Integra: 7 Reglas + 6 Módulos Anti-Convergencia + 6 Dimensiones
+// Dr. Jano Jaramillo — CSS Panamá — 2026
+// ═══════════════════════════════════════════════════════════
+
+const T={rg:20,rcso2:71,rlivso2:59,nirs_h:8,lact:3.0,lact_hi:5.5,ph:7.25,eb:-8,plaq:100000,it:0.20,it_alt:0.5,pared_lo:1.5,pared_lo_alt:1.0,pared_hi:2.5,r4_min:3,r4_lact:5.0,r4_plaq:80000,r5_h:4,r5_hb:10.0,linf:3000,nlr:3.2,plr:100,plaq_caida:30};
+
+class Engine{
+constructor(d){this.d=d;this.alerts=[];this.recs=[];this.risk="Nivel 0: Sin sospecha";this.rc="rn0";this.rules=[];this.bio=0;this.grav=0;this.gravM=[];this.spectrum={primary:null,alts:[],asym:[],contra:null,uncert:[],hive:null,context:[]};this.queryType=d.qtype||'A'}
+
+_esc(r,c){const h=['n0','n1','n2','n23','n3p','n3','n3d'];const ci=h.findIndex(x=>this.rc.includes(x))||0;const ni=h.findIndex(x=>c.includes(x))||0;if(ni>ci){this.risk=r;this.rc=c}}
+
+// ── M1: Query Classification (built into constructor) ──
+
+// ── T0: Clinical Trigger ──
+evalT0(){const tr=[];if((this.d.rg||0)>T.rg)tr.push(`Residuos >${T.rg}% (${this.d.rg}%)`);if(this.d.sheces)tr.push("Sangre en heces");if(this.d.dist)tr.push("Distensión abdominal");if(tr.length){this.alerts.push({l:'alta',r:'T0',t:`GATILLO T0: ${tr.join('; ')}.`});this.recs.push("NPO + sonda nasogástrica a gravedad.","Antibióticos empíricos (ver Dim 2 — conflicto ATB).","Solicitar: Rx (2 proyecciones), Hemograma, Gasometría, Lactato, PCR.","Colocar NIRS si disponible (Dim 4: umbrales en disenso).");this._esc("Nivel 1: Sospecha de NEC","rn1");this.rules.push("T0")}}
+
+// ── T+6: NIRS Perfusion Window ──
+evalT6(){const r=this.d.rcso2,v=this.d.rlivso2,h=this.d.hsint||0;if(r==null&&v==null){this.alerts.push({l:'info',r:'NIRS',t:'NIRS no disponible. Ventana T+6h no evaluable.'});return}const a=[];if(r!=null&&r<=T.rcso2)a.push(`rcSO₂=${r}%`);if(v!=null&&v<=T.rlivso2)a.push(`rLivSO₂=${v}%`);if(a.length&&h<T.nirs_h){this.alerts.push({l:'alta',r:'R2',t:`REGLA 2: NIRS anormal — ${a.join('; ')}. [Schat 2016 — FUENTE ÚNICA, Disenso Alto]`});this.recs.push("Monitorización NIRS cada 6h. Interpretar con cautela (Dim 4+6).");this._esc("Nivel 2: NEC Confirmada — Médica","rn2");this.rules.push("R2")}}
+
+// ── R1/R3/N3: Progression ──
+evalProg(){const d=this.d;
+if(d.det&&!d.rx_al){this.alerts.push({l:'alta',r:'R1',t:'REGLA 1: Deterioro con inotrópicos SIN aire libre Rx. Perforación oculta posible. [Dim 5-Esc1: Rx sens ~40%]'});this.recs.push("US abdominal urgente. Alertar Cirugía.");this.rules.push("R1")}
+if(d.sheces&&(d.us_pared||2)>T.pared_hi&&d.us_mot_s){this.alerts.push({l:'media',r:'R3',t:'REGLA 3: Patrón FPIES — motilidad segmentaria, pared conservada. [Dim 3: Guo 2021 — Fuente Única]'});this.recs.push("Considerar FPIES. Pausar ATB. Evaluar cambio fórmula. [Dim 5-Esc2]");this.rules.push("R3")}
+const cn=[];if(d.rx_al||d.us_al)cn.push("Aire libre");if(d.us_asc)cn.push("Ascitis compleja");if(d.us_pared!=null&&d.us_pared<T.pared_lo)cn.push(`Pared ${d.us_pared}mm`);if(d.us_mot_t)cn.push("Motilidad ausente total");
+const ex=[];if(d.us_neum)ex.push("Neumatosis US");if(d.us_pvg)ex.push("Gas porta US");if(d.us_perf)ex.push("Perfusión Doppler ausente");
+if(cn.length){let t=`NIVEL 3: ${cn.length}/4 criterios quirúrgicos: ${cn.join('; ')}.`;if(ex.length)t+=` + ${ex.join('; ')}.`;this.alerts.push({l:'alta',r:'N3',t});this.recs.push("Cirugía Pediátrica URGENTE. Laparotomía/drenaje.");this._esc("Nivel 3: NEC Grave — Quirúrgica","rn3");this.rules.push("N3")}}
+
+// ── R4: No US Available ──
+evalR4(){if(this.d.us_disp!==false)return;this.bio=0;const a=[];
+if(this.d.lact!=null&&this.d.lact>T.lact){this.bio++;a.push(`Lact ${this.d.lact}`)}
+if(this.d.ph!=null&&this.d.ph<T.ph){this.bio++;a.push(`pH ${this.d.ph}`)}
+if(this.d.eb!=null&&this.d.eb<T.eb){this.bio++;a.push(`EB ${this.d.eb}`)}
+if(this.d.plaq!=null&&this.d.plaq<T.plaq){this.bio++;a.push(`Plaq ${this.d.plaq.toLocaleString()}`)}
+if(this.d.mpv&&this.d.pdw){this.bio++;a.push("MPV+PDW↑")}
+if(this.d.it!=null&&this.d.it>T.it){this.bio++;a.push(`I:T ${this.d.it}`)}
+if(this.d.det){this.bio++;a.push("Inotrópicos")}
+if(this.bio<T.r4_min){if(this.bio>0){this.alerts.push({l:'info',r:'R4',t:`R4: US no disp. Convergencia parcial ${this.bio}/7.`});this.recs.push("Repetir labs 4-6h. Buscar US.")}return}
+this.alerts.push({l:'alta',r:'R4',t:`REGLA 4: Sin US. ${this.bio}/7 biomarcadores: ${a.join('; ')}.`});this.rules.push("R4");
+if(this.bio>=5){this._esc("Nivel 3 Presuntivo: Quirúrgica (sin US)","rn3p");this.recs.push("Cirugía URGENTE. Triple ATB. Preparar OR.","Buscar imagen: US prestado, Rx lateral, tele-eco.")}else{this._esc("Nivel 2-3 Presuntivo (sin US)","rn23");this.recs.push("Cirugía preventiva. Triple ATB. Labs en 4h.")}
+const au=[];if(this.d.lact!=null&&this.d.lact>T.r4_lact)au.push(`Lact ${this.d.lact}`);if(this.d.plaq!=null&&this.d.plaq<T.r4_plaq)au.push(`Plaq ${this.d.plaq.toLocaleString()}`);if(this.d.vaso2)au.push("2° vasopresor");if(this.d.erit)au.push("Eritema pared");
+if(au.length){this._esc("Nivel 3 Definitivo: Quirúrgica (sin US)","rn3d");this.alerts.push({l:'alta',r:'R4‼',t:`R4 AUTO-N3: ${au.join('; ')}. No esperar imagen.`});this.recs.push("LAPAROTOMÍA/DRENAJE. Sin esperar US.");this.rules.push("R4→N3")}}
+
+// ── R5: Peritransfusional ──
+evalR5(){const d=this.d;if(!d.tx_plan&&!d.tx_curso)return;const f=[];if(d.eg!=null&&d.eg<32)f.push(`EG ${d.eg}s`);if(d.peso!=null&&d.peso<1500)f.push(`${d.peso}g`);if(!this.rc.includes('n0'))f.push("NEC activa");if(d.hb!=null&&d.hb<T.r5_hb)f.push(`Hb ${d.hb}`);
+const lv=f.length>=2?'alta':'media';const st=d.tx_curso?"en curso":"planeada";
+this.alerts.push({l:lv,r:'R5',t:`R5: Transfusión ${st}. FR: ${f.length} — ${f.join('; ')||'ninguno'}. [Dim 2: Debate TANEC no resuelto]`});this.rules.push("R5");
+if(d.npo)this.recs.push(`R5: NPO. Mantener ≥${T.r5_h}h post-transfusión.`);else if(d.alim_act)this.recs.push(`R5: PAUSAR enteral ≥${T.r5_h}h antes de transfundir.`);
+this.recs.push(`R5: NIRS esplácnico continuo. 10-15 mL/kg en 3-4h.`,`R5 POST: Reinicio trófico gradual ≥${T.r5_h}h post.`);
+if(f.length>=3)this.recs.push("R5 ALTO RIESGO: Extender pausa 6-8h. NIRS 24h. Evaluar diferir.")}
+
+// ── Gravity Predictors ──
+evalGrav(){this.grav=0;this.gravM=[];
+if(this.d.linf!=null&&this.d.linf<T.linf){this.grav++;this.gravM.push(`Linf ${this.d.linf.toLocaleString()}`)}
+if(this.d.nlr!=null&&this.d.nlr>T.nlr){this.grav++;this.gravM.push(`NLR ${this.d.nlr}`)}
+if(this.d.plr!=null&&this.d.plr>T.plr){this.grav++;this.gravM.push(`PLR ${this.d.plr}`)}
+if(this.d.plaq_caida!=null&&this.d.plaq_caida>T.plaq_caida){this.grav++;this.gravM.push(`Caída plaq ${this.d.plaq_caida}%`)}
+if(!this.grav)return;const lv=this.grav>=2?'alta':'media';
+this.alerts.push({l:lv,r:'GRAV',t:`GRAVEDAD: ${this.grav}/4 positivos. ${this.gravM.join('; ')}. [Dim 4: PLR Disenso Alto]`});this.rules.push("GRAV");
+if(this.grav>=2)this.recs.push("Gravedad convergente: intensificar monitorización.");if(this.grav>=3)this.recs.push("TRIPLE+ CONVERGENCIA: Repetir hemograma 4-6h.")}
+
+// ══════════════════════════════════════════════════
+// M2: DIAGNOSTIC SPECTRUM GENERATOR
+// ══════════════════════════════════════════════════
+// ── MGIS: Manitoba Gut Injury Score Evaluation ──
+evalMGIS(){const m=this.d.mgis;if(!m||m.total===0)return;this.mgisResult={total:m.total,clinical:m.clinical,axr:m.axr,us:m.us,pneumo:m.pneumo,severity:'',decision:'',phenotype:'',color:''};
+let sev,dec,col;
+if(m.total<=4){sev='Low/Non-specific';dec='Estable · Indeterminado';col='green'}
+else if(m.total<=8){sev='Mild';dec='Sospecha baja · Observación';col='yellow'}
+else if(m.total<=15){sev='Moderate — Medical NEC';dec='NEC Médica';col='orange'}
+else if(m.total<=22){sev='High — Severe NEC';dec='NEC Severa · Evaluar cirugía';col='red'}
+else{sev='Critical — Surgical';dec='Cirugía urgente';col='red'}
+if(m.pneumo){sev='Critical — Pneumoperitoneum';dec='Perforación · Cirugía URGENTE';col='red'}
+this.mgisResult.severity=sev;this.mgisResult.decision=dec;this.mgisResult.color=col;
+// Phenotype
+const fpieC=[m.fpie,m.eosino,m.trombocitosis].filter(Boolean).length;
+const necC=[m.anemia,m.acidosis,m.crp].filter(Boolean).length;
+if(fpieC>=2&&necC<2)this.mgisResult.phenotype='FPIE';else if(necC>=2&&fpieC<2)this.mgisResult.phenotype='NEC';else this.mgisResult.phenotype='Indeterminado';
+// Generate alerts based on MGIS
+if(m.total>=16){this.alerts.push({l:'alta',r:'MGIS',t:`MGIS ${m.total}/32 (${sev}). Clínica:${m.clinical}/9, Rx:${m.axr}/3, US:${m.us}/20.${m.pneumo?' NEUMOPERITONEO.':''}`});this.rules.push('MGIS')}
+else if(m.total>=9){this.alerts.push({l:'media',r:'MGIS',t:`MGIS ${m.total}/32 (${sev}). Clínica:${m.clinical}/9, Rx:${m.axr}/3, US:${m.us}/20.`});this.rules.push('MGIS')}
+else if(m.total>=5){this.alerts.push({l:'info',r:'MGIS',t:`MGIS ${m.total}/32 (${sev}). Monitorización continua.`})}
+// MGIS-driven escalation
+if(m.total>=23||m.pneumo){this._esc("Nivel 3: NEC Grave — Quirúrgica","rn3");this.recs.push("MGIS ≥23 o Neumoperitoneo: Cirugía Pediátrica URGENTE.")}
+else if(m.total>=16){this._esc("Nivel 2: NEC Confirmada — Médica","rn2");this.recs.push("MGIS 16-22: NEC severa. Triple ATB. Monitorización intensiva.")}
+else if(m.total>=9){this._esc("Nivel 1: Sospecha de NEC","rn1");this.recs.push("MGIS 9-15: NEC médica. ATB empíricos. NPO. US seriado.")}
+// US-specific ominous signs from MGIS
+const ominous=[];if(m.ischemia>=1)ominous.push('Isquemia/No-flow');if(m.wallThin>=1)ominous.push('Wall thinning');if(m.lossLayers>=1)ominous.push('Pérdida capas');if(m.peritoneal>=2)ominous.push('Líquido peritoneal mod+');
+if(ominous.length>=2){this.alerts.push({l:'alta',r:'MGIS-US',t:`MGIS US ominoso: ${ominous.join(', ')}. Hallazgos de necrosis transmural.`});this.recs.push("MGIS signos ominosos US: alerta quirúrgica independiente del score total.")}
+// Phenotype-driven recommendations
+if(this.mgisResult.phenotype==='FPIE'){this.alerts.push({l:'media',r:'MGIS-P',t:`MGIS Fenotipo → FPIE (${fpieC}/3 marcadores FPIE vs ${necC}/3 NEC). Considerar cambio de fórmula.`});this.recs.push("MGIS fenotipo FPIE: considerar prueba con fórmula extensamente hidrolizada. Dim 3: Guo 2021.")}}
+
+buildSpectrum(){const d=this.d;const s=this.spectrum;
+// ── Primary Trajectory ──
+let cert='BAJO';if(this.rules.includes('N3')||this.rc.includes('n3'))cert='ALTO';else if(this.rules.includes('R1')||this.rules.includes('R2')||this.rules.includes('R4'))cert='MODERADO';else if(this.rules.includes('T0'))cert='BAJO-MODERADO';
+s.primary={dx:this.risk.includes('Nivel 0')?'Sin sospecha activa de NEC':'Enterocolitis Necrotizante',cert,bell:this._bellStage(),sources:['Valpacos 2017','Jae 2020','Kim 2023'],explain:this._primaryExplain()};
+
+// ── Alternative Trajectories ──
+// Alt 1: SIP
+if(d.eg!=null&&d.eg<28&&!d.sheces&&(!this.d.plaq||this.d.plaq>100000)){s.alts.push({dx:'Perforación Intestinal Espontánea (SIP)',prob:'15-25%',explain:'Prematuro extremo con perforación sin inflamación sistémica profunda. Plaquetas conservadas, sin sangre en heces.',disc:'Ausencia de inflamación sistémica + perforación aislada en US/Rx. PCR baja relativa.',sources:['Jae 2020'],dim:'Dim 5-Esc2'})}
+// Alt 2: FPIES
+const mgisIsFPIE=d.mgis&&d.mgis.fpie||(this.mgisResult&&this.mgisResult.phenotype==='FPIE');
+if(d.alim==='formula'||d.alim==='mixta'||mgisIsFPIE){let fpExpl='Alimentado con fórmula bovina. Motilidad segmentaria ausente en US (no global).';let fpProb='5-15%';if(mgisIsFPIE){fpExpl+=' MGIS Fenotipo → FPIE (eosinofilia, trombocitosis).';fpProb='15-30%'}
+s.alts.push({dx:'FPIES / Alergia a proteína de leche de vaca',prob:fpProb,explain:fpExpl,disc:'US: motilidad ausente SEGMENTARIA (no total). Mejoría al cambiar fórmula. MGIS peristalsis focal. [Dim 3: Guo 2021]',sources:['Guo 2021','Manitoba GIS'],dim:'Dim 3 — Clúster Secundario'})}
+// Alt 3: Sepsis neonatal
+s.alts.push({dx:'Sepsis neonatal con íleo secundario',prob:'10-20%',explain:'Cuadro sistémico (apneas, letargia, deterioro) con distensión por íleo, sin NEC primaria.',disc:'Hemocultivo positivo + mejora con ATB sin progresión intestinal. US sin neumatosis.',sources:['Valpacos 2017'],dim:'Dim 2 — Inespecificidad Bell'});
+// Alt 4: Vólvulo
+if(d.dist&&d.det){s.alts.push({dx:'Vólvulo / Malrotación intestinal',prob:'<5%',explain:'Obstrucción mecánica con compromiso vascular. Distensión + deterioro rápido.',disc:'US Doppler: whirlpool sign. Rx: double bubble. Presentación hiperaguda.',sources:['Valoración quirúrgica'],dim:'Dim 5 — No descartar sin imagen'})}
+
+// ── Asymmetric Severity Alerts (Low prob / High mortality) ──
+if(d.eg!=null&&d.eg<28){s.asym.push({dx:'Error Innato del Metabolismo con crisis neonatal',prob:'<2%',mort:'ALTA si no se trata',flag:'BAJA PROBABILIDAD — ALTO IMPACTO: NO DESCARTAR SIN EVIDENCIA',disc:'Acidosis láctica profunda sin foco infeccioso claro + amonio elevado.',action:'Solicitar amonio, aminoácidos, acilcarnitinas si acidosis inexplicada.'})}
+if(d.dist&&d.det&&!d.rx_al){s.asym.push({dx:'Perforación sellada / Necrosis sin neumoperitoneo',prob:'Variable',mort:'MUY ALTA si retraso >6h',flag:'BAJA PROBABILIDAD — ALTO IMPACTO: NO DESCARTAR SIN EVIDENCIA',disc:'Deterioro + Rx normal. Dim 5-Esc1 y Esc3: Rx sens 40%.',action:'US urgente. Dim 3: perforación por US sin aire libre → mortalidad 8% vs 44%.'})}
+
+// ── M3: COUNTERFACTUAL ──
+s.contra=this._buildCounterfactual();
+// ── M4: UNCERTAINTY ZONES ──
+s.uncert=this._buildUncertainty();
+// ── M5: CONVERGENCE ALERT ──
+s.hive=this._checkHivemind();
+// ── M6: CSS CONTEXT ──
+s.context=this._buildContext()}
+
+_bellStage(){if(this.rc.includes('n3'))return'Bell IIIA/B';if(this.rc.includes('n2'))return'Bell IIA/B';if(this.rc.includes('n1'))return'Bell IA/B (sospecha)';return'N/A'}
+
+_primaryExplain(){const p=[];if(this.d.dist)p.push("distensión");if(this.d.rg>T.rg)p.push("residuos gástricos");if(this.d.sheces)p.push("sangre en heces");if(this.d.det)p.push("deterioro hemodinámico");if(this.d.us_neum)p.push("neumatosis US");if(this.d.us_pvg)p.push("gas portal US");if(this.d.us_asc)p.push("ascitis compleja");return p.length?`Basado en: ${p.join(', ')}.`:'Datos insuficientes para trayectoria primaria.'}
+
+// ── M3: Counterfactual ──
+_buildCounterfactual(){const c={question:'¿Qué pasa si el diagnóstico primario es incorrecto?',conflicts:[],betterFit:[],nextStep:'',failures:[]};
+// Dim 2 conflicts
+if(this.rules.includes('T0')||this.rules.includes('R1')){c.conflicts.push('Dim 2: Criterios de Bell son inespecíficos — apnea/letargia/distensión ocurren en sepsis, SIP, FPIES, vólvulo. [Jae 2020]');c.conflicts.push('Dim 2: Si ATB prolongados + ayuno destruyen microbioma, AUMENTAN riesgo de NEC real futura. [Dim 5-Esc2]')}
+if(this.d.tx_plan||this.d.tx_curso){c.conflicts.push('Dim 2: ¿Es TANEC o la anemia previa? La temporalidad transfusión→síntomas puede ser coincidental.')}
+// Better fit analysis
+if(this.d.alim==='formula'&&!this.d.us_mot_t&&this.d.us_mot_s)c.betterFit.push('Motilidad segmentaria + fórmula → FPIES explica MEJOR que NEC.');
+if(this.d.det&&(!this.d.plaq||this.d.plaq>100000)&&this.d.eg<28)c.betterFit.push('Perforación sin trombocitopenia en <28s → SIP explica MEJOR que NEC.');
+// Next step
+if(!this.d.us_disp)c.nextStep='US abdominal es el paso más discriminador. Sin US, la incertidumbre permanece alta.';
+else if(this.d.us_mot_s&&!this.d.us_mot_t)c.nextStep='Prueba terapéutica: cambiar fórmula y reevaluar en 24-48h para discriminar FPIES.';
+else c.nextStep='Repetir US en 6-8h + labs seriados para evaluar trayectoria temporal.';
+// Dim 5 failures
+c.failures.push('Esc1: Rx normal NO descarta perforación/necrosis.');
+c.failures.push('Esc2: Sobrediagnóstico con Bell → daño iatrogénico por ATB/ayuno prolongado.');
+c.failures.push('Esc3: Esperar neumoperitoneo para operar → resección masiva/muerte.');
+return c}
+
+// ── M4: Uncertainty Detection ──
+_buildUncertainty(){const u=[];
+if(this.d.lact!=null&&this.d.lact>T.lact&&this.d.lact<=T.lact_hi){u.push({bio:'Lactato',val:this.d.lact,zona:`${T.lact}–${T.lact_hi} mmol/L`,trajA:`Si corte >${T.lact}: isquemia activa → escalar`,trajB:`Si corte >${T.lact_hi}: aún en zona de observación`,rec:'Repetir lactato en 2-4h. Evaluar tendencia, no valor aislado.',src:'Valpacos 2017 — Disenso Moderado'})}
+if(this.d.us_pared!=null&&this.d.us_pared>=T.pared_lo&&this.d.us_pared<=T.pared_hi){u.push({bio:'Espesor pared intestinal',val:`${this.d.us_pared} mm`,zona:`${T.pared_lo}–${T.pared_hi} mm`,trajA:`Si <${T.pared_lo}mm: necrosis → cirugía`,trajB:`Si >${T.pared_hi}mm: inflamación sin necrosis → conservador`,rec:'Repetir US en 4-6h. Evaluar tendencia del grosor.',src:'Chen 2019 vs Alexander 2019 vs Jia 2024 — Disenso Moderado'})}
+if(this.d.it!=null&&this.d.it>T.it&&this.d.it<=T.it_alt){u.push({bio:'Relación I:T',val:this.d.it,zona:`${T.it}–${T.it_alt}`,trajA:`Si corte >${T.it}: inflamación significativa`,trajB:`Si corte >${T.it_alt}: valor predictivo más robusto`,rec:'Interpretar en contexto de EG (fluctuaciones basales). Repetir.',src:'Sokou 2025 — Disenso Alto'})}
+if(this.d.rcso2!=null||this.d.rlivso2!=null){u.push({bio:'Umbrales NIRS',val:`rcSO₂=${this.d.rcso2||'—'}%, rLivSO₂=${this.d.rlivso2||'—'}%`,zona:'rcSO₂ ≤71% / rLivSO₂ ≤59%',trajA:'Si bajo umbral: trayectoria complicada (Sens 100%, Esp 80%)',trajB:'Fuente única (Schat 2016), operador-dependiente, no validado en término',rec:'No usar NIRS como criterio único. Integrar con clínica y US.',src:'Schat 2016 — FUENTE ÚNICA — Disenso Alto'})}
+return u}
+
+// ── M5: Convergence/Hivemind Alert ──
+_checkHivemind(){if(this.spectrum.alts.length<=1&&this.spectrum.uncert.length===0&&this.rules.length>=3){return{active:true,msg:'El análisis converge en un único diagnóstico con alta certeza.',checks:['¿Existen datos que NO se explican por NEC?','¿Dim 5 reporta excepciones aplicables a este paciente?','¿Dim 6 indica sesgo de población (ELBW vs término, alto vs bajo recurso)?'],action:'Si CUALQUIERA es SÍ → expandir diferencial antes de concluir.'}}
+return null}
+
+// ── M6: CSS Panama Context ──
+_buildContext(){const c=[];
+if(!this.d.ecmo)c.push({adj:'Sin ECMO disponible',impl:'En deterioro hemodinámico refractario, la ventana para cirugía es más estrecha. No hay rescate post-falla cardiopulmonar.'});
+if(!this.d.us247)c.push({adj:'US no disponible 24/7',impl:'Regla 4 cobra mayor importancia. Biomarcadores como proxy de imagen.'});
+if(!this.d.ceus)c.push({adj:'CEUS no disponible',impl:'Dim 3: Cinética de perfusión con microburbujas no aplicable. Usar Doppler color convencional.'});
+c.push({adj:'Epidemiología local CSS Panamá',impl:'Dim 2: ATB empíricos según antibiograma institucional, no por preferencia global. Considerar flora local.'});
+return c}
+
+// ══════════════════════════════════════════════════
+// RUN
+// ══════════════════════════════════════════════════
+run(){this.evalT0();this.evalT6();this.evalProg();this.evalR4();this.evalR5();this.evalGrav();this.evalMGIS();this.buildSpectrum();this.recs=[...new Set(this.recs)];
+return{risk:this.risk,rc:this.rc,alerts:this.alerts,recs:this.recs,rules:this.rules,bio:this.d.us_disp===false?`${this.bio}/7`:'N/A',grav:`${this.grav}/4`,gravM:this.gravM,spectrum:this.spectrum,qtype:this.queryType,mgis:this.mgisResult||null}}}
+
+// ═══════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════
+function stab(id){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));document.querySelector(`[data-t="${id}"]`).classList.add('on');document.getElementById(`sec-${id}`).classList.add('on')}
+function togUS(){document.getElementById('usf').style.display=document.getElementById('us_disp').checked?'block':'none'}
+
+// ── MGIS State & Functions ──
+const mgState={mg1:0,mg2:0,mg3:0,mg4:0,mg5:0,mg6:0,mg7:0,mg8:0,mg9:0,mg10:0,mg11:0,mg12:0,mg13:0,mg14:0};
+function mgSet(k,v,btn){mgState[k]=v;const row=btn.parentElement;row.querySelectorAll('.mgis-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');const vEl=document.getElementById(k+'v');if(vEl)vEl.textContent=v;mgUpdate()}
+function mgUpdate(){const cl=mgState.mg1+mgState.mg2+mgState.mg3;const rx=mgState.mg4;const us=mgState.mg5+mgState.mg6+mgState.mg7+mgState.mg8+mgState.mg9+mgState.mg10+mgState.mg11+mgState.mg12+mgState.mg13+mgState.mg14;const pneumo=document.getElementById('mg_pneumo')?.checked?1:0;const total=cl+rx+us;
+document.getElementById('mgisTotal').textContent=total;document.getElementById('mgisBreak').textContent=`Clínica: ${cl}/9 · Rx: ${rx}/3 · US: ${us}/20`;
+let sev,dec,col;
+if(total<=4){sev='Low / Non-specific';dec='Estable · Indeterminado';col='var(--green)'}
+else if(total<=8){sev='Mild';dec='Sospecha baja · Observación';col='var(--yellow)'}
+else if(total<=15){sev='Moderate — Medical NEC';dec='NEC Médica · Manejo conservador';col='var(--orange)'}
+else if(total<=22){sev='High — Severe NEC';dec='NEC Severa · Evaluación quirúrgica';col='var(--red)'}
+else{sev='Critical — Surgical';dec='NEC Crítica · Cirugía urgente';col='var(--red-deep)'}
+if(pneumo){sev='Critical — Pneumoperitoneum';dec='Perforación · Cirugía URGENTE';col='var(--red-deep)'}
+document.getElementById('mgisSev').textContent=sev;document.getElementById('mgisSev').style.color=col;
+document.getElementById('mgisDec').textContent=dec;document.getElementById('mgisDec').style.color=col;document.getElementById('mgisDec').style.borderColor=col;document.getElementById('mgisDec').style.background=col.replace('var(','rgba(').replace(')',',.08)');
+document.getElementById('mgisRing').style.borderColor=col;document.getElementById('mgisTotal').style.color=col;
+// Phenotype hint
+const fpieMarkers=[gb('mg_fpie'),gb('mg_eosino'),gb('mg_trombocitosis')].filter(Boolean).length;
+const necMarkers=[gb('mg_anemia'),gb('mg_acidosis'),gb('mg_crp')].filter(Boolean).length;
+let pheno='';if(fpieMarkers>=2&&necMarkers<2)pheno=' · Fenotipo → FPIE';else if(necMarkers>=2&&fpieMarkers<2)pheno=' · Fenotipo → NEC';
+document.getElementById('mgisBreak').textContent+=pheno}
+function mgCollect(){return{total:Object.values(mgState).reduce((a,b)=>a+b,0),clinical:mgState.mg1+mgState.mg2+mgState.mg3,axr:mgState.mg4,us:mgState.mg5+mgState.mg6+mgState.mg7+mgState.mg8+mgState.mg9+mgState.mg10+mgState.mg11+mgState.mg12+mgState.mg13+mgState.mg14,items:{...mgState},pneumo:gb('mg_pneumo'),fpie:gb('mg_fpie'),eosino:gb('mg_eosino'),trombocitosis:gb('mg_trombocitosis'),anemia:gb('mg_anemia'),acidosis:gb('mg_acidosis'),hipoNa:gb('mg_hipoNa'),crp:gb('mg_crp'),dias:gn('mg_dias'),peristalsis:mgState.mg7,wallThin:mgState.mg10,ischemia:mgState.mg13,peritoneal:mgState.mg8,pvg:mgState.mg5,lossLayers:mgState.mg11}}
+function gn(id){const v=document.getElementById(id)?.value;return v===''||v==null?null:parseFloat(v)}
+function gb(id){return document.getElementById(id)?.checked||false}
+
+function collect(){return{eg:gn('eg'),peso:gn('peso'),dv:gn('dv'),rg:gn('rg')||0,dist:gb('dist'),sheces:gb('sheces'),soc:gb('soc'),det:gb('det'),erit:gb('erit'),vaso2:gb('vaso2'),apneas:gb('apneas'),letargia:gb('letargia'),hsint:gn('hsint')||0,alim:document.getElementById('alim')?.value||'',qtype:document.getElementById('qtype')?.value||'A',ph:gn('ph'),eb:gn('eb'),hco3:gn('hco3'),lact:gn('lact'),plaq:gn('plaq'),hb:gn('hb'),it:gn('it'),linf:gn('linf'),mpv:gb('mpv'),pdw:gb('pdw'),nlr:gn('nlr'),plr:gn('plr'),plaq_caida:gn('plaq_caida'),rx_al:gb('rx_al'),rx_neum:gb('rx_neum'),rx_pvg:gb('rx_pvg'),rx_fija:gb('rx_fija'),rx_concl:gb('rx_concl'),us_disp:gb('us_disp'),us_pared:gn('us_pared'),us_neum:gb('us_neum'),us_pvg:gb('us_pvg'),us_al:gb('us_al'),us_asc:gb('us_asc'),us_mot_t:gb('us_mot_t'),us_mot_s:gb('us_mot_s'),us_perf:gb('us_perf'),rcso2:gn('rcso2'),rlivso2:gn('rlivso2'),tx_plan:gb('tx_plan'),tx_curso:gb('tx_curso'),alim_act:gb('alim_act'),npo:gb('npo'),ucin3:gb('ucin3'),cx_disp:gb('cx_disp'),ecmo:gb('ecmo'),us247:gb('us247'),ceus:gb('ceus'),mgis:mgCollect()}}
+
+function runCDSS(){const e=new Engine(collect());const r=e.run();render(r)}
+
+function render(r){const rc=document.getElementById('resC');rc.classList.add('vis');
+
+// Query Classification
+const qc=r.qtype==='A'?['qclass-a','⊕ TIPO A — Análisis e Interpretación']:['qclass-b','⊘ TIPO B — Escenario Exploratorio'];
+document.getElementById('qClassBadge').innerHTML=`<div class="qclass ${qc[0]}">${qc[1]}</div>`;
+
+// Risk Banner
+document.getElementById('riskBanner').innerHTML=`<div class="rb ${r.rc}"><div class="rl">Estratificación</div><div class="rv">${r.risk}</div><div class="rf">Reglas: ${r.rules.length?r.rules.join(' → '):'—'}</div>${r.bio!=='N/A'?`<div class="rs2">R4: ${r.bio}`:''}${r.grav!=='0/4'?` · Gravedad: ${r.grav}</div>`:'</div>'}</div>`;
+
+// ── MGIS Result ──
+let mgH='';if(r.mgis&&r.mgis.total>0){const m=r.mgis;const colMap={green:'var(--green)',yellow:'var(--yellow)',orange:'var(--orange)',red:'var(--red)'};const mc=colMap[m.color]||'var(--text3)';
+mgH=`<div class="mgis-summary" style="border-color:${mc}"><div style="display:flex;align-items:center;gap:14px"><div><div class="mgis-ring" style="border:3px solid ${mc}"><span class="mgis-ring-val" style="color:${mc}">${m.total}</span><span class="mgis-ring-max">/32</span></div></div><div style="flex:1"><div style="font-family:var(--serif);font-size:.9rem;color:${mc};margin-bottom:4px">${m.severity}</div><div style="font-family:var(--mono);font-size:.7rem;color:var(--text2)">Clínica: ${m.clinical}/9 · Rx: ${m.axr}/3 · US: ${m.us}/20${m.pneumo?' · <strong style="color:var(--red)">NEUMOPERITONEO</strong>':''}</div><div style="font-family:var(--mono);font-size:.68rem;color:var(--text3);margin-top:2px">Fenotipo: <strong style="color:${m.phenotype==='FPIE'?'var(--purple)':m.phenotype==='NEC'?'var(--red)':'var(--text3)'}">${m.phenotype}</strong> · <span class="ev">Manitoba GIS</span></div></div></div></div>`}
+document.getElementById('mgisOut').innerHTML=mgH;
+
+// ── M2: Spectrum ──
+let sp='<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--blue)">◆</span> Espectro Diagnóstico (Módulo 2)</h3>';
+// Primary
+const pr=r.spectrum.primary;if(pr&&pr.dx!=='Sin sospecha activa de NEC'){sp+=`<div class="spec spec-primary"><div class="spec-h"><span class="spec-tag" style="background:rgba(77,140,247,.12);color:var(--blue)">PRIMARIA</span> ${pr.dx} — Bell: ${pr.bell}</div><div class="spec-b spec-body"><strong>Certeza:</strong> ${pr.cert} · ${pr.explain}<br>${pr.sources.map(s=>`<span class="ev">${s}</span>`).join(' ')}</div></div>`}
+// Alts
+r.spectrum.alts.forEach(a=>{sp+=`<div class="spec spec-alt"><div class="spec-h"><span class="spec-tag" style="background:rgba(251,191,36,.12);color:var(--yellow)">ALT</span> ${a.dx} (${a.prob})</div><div class="spec-b spec-body">${a.explain}<br><span class="ev ev-warn">${a.dim}</span> ${a.sources.map(s=>`<span class="ev">${s}</span>`).join(' ')}<div class="disc">🎯 <strong>Discriminador:</strong> ${a.disc}</div></div></div>`});
+// Asymmetric
+r.spectrum.asym.forEach(a=>{sp+=`<div class="spec spec-asym"><div class="spec-h"><span class="spec-tag" style="background:rgba(248,113,113,.12);color:var(--red)">⚠ ASIMÉTRICA</span> ${a.dx}</div><div class="spec-b spec-body"><strong style="color:var(--red)">[${a.flag}]</strong><br>Prob: ${a.prob} · Mortalidad: ${a.mort}<br>${a.disc}<div class="disc">🎯 <strong>Acción:</strong> ${a.action}</div></div></div>`});
+
+// ── M3: Counterfactual ──
+const cf=r.spectrum.contra;if(cf){sp+=`<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--purple)">◆</span> Contrafactual — ¿Y si estoy equivocado? (Módulo 3)</h3>`;
+sp+=`<div class="spec spec-contra"><div class="spec-h"><span class="spec-tag" style="background:rgba(167,139,250,.12);color:var(--purple)">M3</span> ${cf.question}</div><div class="spec-b spec-body">`;
+if(cf.conflicts.length)sp+=`<strong>Conflictos en la evidencia:</strong><br>${cf.conflicts.map(c=>`· ${c}`).join('<br>')}<br><br>`;
+if(cf.betterFit.length)sp+=`<strong>¿Qué explica MEJOR los datos?</strong><br>${cf.betterFit.map(b=>`· ${b}`).join('<br>')}<br><br>`;
+sp+=`<strong>Siguiente paso discriminador:</strong> ${cf.nextStep}<br><br>`;
+sp+=`<strong>Escenarios de falla (Dim 5):</strong><br>${cf.failures.map(f=>`· ${f}`).join('<br>')}`;
+sp+=`</div></div>`}
+
+// ── M4: Uncertainty Zones ──
+if(r.spectrum.uncert.length){sp+=`<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--orange)">◆</span> Zonas de Incertidumbre (Módulo 4)</h3>`;
+r.spectrum.uncert.forEach(u=>{sp+=`<div class="spec spec-uncert"><div class="spec-h"><span class="spec-tag" style="background:rgba(251,146,60,.12);color:var(--orange)">⚠ INCERTIDUMBRE</span> ${u.bio}: ${u.val}</div><div class="spec-b spec-body"><strong>Zona de disenso:</strong> ${u.zona}<br><strong>Trayectoria A:</strong> ${u.trajA}<br><strong>Trayectoria B:</strong> ${u.trajB}<br><strong>Recomendación:</strong> ${u.rec}<br><span class="ev ev-warn">${u.src}</span></div></div>`})}
+
+// ── M5: Hivemind Alert ──
+if(r.spectrum.hive&&r.spectrum.hive.active){sp+=`<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--pink)" class="pulse">◆</span> Alerta de Convergencia (Módulo 5)</h3>`;
+sp+=`<div class="spec spec-hive"><div class="spec-h"><span class="spec-tag" style="background:rgba(244,114,182,.12);color:var(--pink)">⚠ HIVEMIND</span> Posible efecto de Mente de Colmena</div><div class="spec-b spec-body"><strong>${r.spectrum.hive.msg}</strong><br><br><strong>Verificación activa requerida:</strong><br>${r.spectrum.hive.checks.map(c=>`· ${c}`).join('<br>')}<br><br><strong>${r.spectrum.hive.action}</strong></div></div>`}
+
+// ── M6: CSS Context ──
+if(r.spectrum.context.length){sp+=`<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--cyan)">◆</span> Contexto CSS Panamá (Módulo 6)</h3>`;
+r.spectrum.context.forEach(c=>{sp+=`<div class="spec spec-ctx"><div class="spec-h"><span class="spec-tag" style="background:rgba(34,211,238,.12);color:var(--cyan)">CTX</span> ${c.adj}</div><div class="spec-b spec-body">${c.impl}</div></div>`})}
+
+document.getElementById('spectrumOut').innerHTML=sp;
+
+// Alerts
+let ah=`<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--yellow)" class="pulse">●</span> Alertas del Motor (${r.alerts.length})</h3>`;
+if(!r.alerts.length)ah+=`<div class="al info"><span class="al-tag info">—</span><br>Sin alertas activas.</div>`;
+else r.alerts.forEach(a=>{ah+=`<div class="al ${a.l}"><span class="al-tag ${a.l}">${a.r}</span><br>${a.t}</div>`});
+document.getElementById('alertsOut').innerHTML=ah;
+
+// Recs
+let rh=`<h3 style="font-size:.85rem;font-weight:600;color:var(--text2);margin:14px 0 10px;display:flex;align-items:center;gap:6px"><span style="color:var(--green)">●</span> Plan de Manejo (${r.recs.length})</h3>`;
+if(!r.recs.length)rh+=`<div class="rc"><span class="rn">—</span><span>Monitorización de rutina.</span></div>`;
+else r.recs.forEach((rec,i)=>{rh+=`<div class="rc"><span class="rn">${String(i+1).padStart(2,'0')}</span><span>${rec}</span></div>`});
+document.getElementById('recsOut').innerHTML=rh;
+
+setTimeout(()=>rc.scrollIntoView({behavior:'smooth',block:'start'}),100)}
+
+function resetAll(){document.querySelectorAll('input[type="number"]').forEach(i=>i.value='');document.querySelectorAll('input[type="checkbox"]').forEach(c=>{c.checked=['us_disp','rx_concl','ucin3','cx_disp'].includes(c.id)});document.querySelectorAll('select').forEach(s=>s.selectedIndex=0);document.getElementById('resC').classList.remove('vis');
+// Reset MGIS
+Object.keys(mgState).forEach(k=>mgState[k]=0);document.querySelectorAll('.mgis-btn').forEach((b,i)=>{if(i%4===0||i%3===0){}});document.querySelectorAll('.mgis-row').forEach(row=>{const btns=row.querySelectorAll('.mgis-btn');btns.forEach((b,i)=>{b.classList.toggle('sel',i===0)});const vEl=row.querySelector('.mgis-val');if(vEl)vEl.textContent='0'});mgUpdate();
+togUS();stab('clinica');window.scrollTo({top:0,behavior:'smooth'})}
+
+togUS();
+
+// ── PWA: Service Worker Registration ──
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js')
+      .then(r=>console.log('NEC-CDSS SW registered',r.scope))
+      .catch(e=>console.log('SW registration failed',e));
+  });
+}
+
+// ── PWA: Install Prompt ──
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  // Show install banner
+  const ib=document.createElement('div');
+  ib.id='installBanner';
+  ib.style.cssText='position:fixed;top:0;left:0;right:0;padding:10px 16px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-family:var(--sans);font-size:.82rem;display:flex;align-items:center;justify-content:space-between;z-index:999;gap:8px';
+  ib.innerHTML='<span>📱 Instalar NEC-CDSS para uso offline</span><div><button onclick="installPWA()" style="padding:6px 14px;border:2px solid #fff;border-radius:20px;background:0;color:#fff;font-weight:600;cursor:pointer;font-size:.78rem;margin-right:6px">Instalar</button><button onclick="this.parentElement.parentElement.remove()" style="padding:6px 10px;border:0;background:0;color:rgba(255,255,255,.7);cursor:pointer;font-size:.85rem">✕</button></div>';
+  document.body.prepend(ib);
+});
+function installPWA(){
+  const ib=document.getElementById('installBanner');
+  if(ib)ib.remove();
+  if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null})}
+}
+</script>
+</body>
+</html>
